@@ -1,0 +1,31 @@
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { BookmarksService } from './bookmarks.service';
+import { get } from 'http';
+import type { bookmark } from './bookmark.model';
+import { url } from 'inspector';
+import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { GetBookmarkDto } from './dto/get-bookmark.dto';
+
+@Controller('bookmarks')
+export class BookmarksController {
+    constructor(private BookmarksService:BookmarksService){}
+
+ @Get()  
+find(@Query()GetBookmarkDto: GetBookmarkDto):bookmark[]{
+   if(Object.keys(GetBookmarkDto).length){
+      return this.BookmarksService.find(GetBookmarkDto);
+   }
+   return this.BookmarksService.findAll();
+}
+
+@Get('/:id')
+findByTd(@Param('id') id:string):bookmark{
+   return this.BookmarksService.findByTd(id)
+}
+
+@Post()
+createBookmark(@Body() CreateBookmarkDto: CreateBookmarkDto): bookmark {
+ return this.BookmarksService.createbookmark(CreateBookmarkDto);
+}
+
+}
