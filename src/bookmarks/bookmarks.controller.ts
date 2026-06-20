@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { get } from 'http';
 import type { bookmark } from './bookmark.model';
@@ -28,4 +28,8 @@ createBookmark(@Body() CreateBookmarkDto: CreateBookmarkDto): bookmark {
  return this.BookmarksService.createbookmark(CreateBookmarkDto);
 }
 
+@Delete('/:id')
+deleteBookmark(@Param('id')id: string):void{
+return this.BookmarksService.deleteBookmark(id);
+ }
 }

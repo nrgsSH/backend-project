@@ -21,19 +21,15 @@ export class BookmarksService {
 
      if(url){
       bookmarks =bookmarks.filter((bookmark) => bookmark.url.toLowerCase().includes(url));
-
      }
 
      if(description){
         bookmarks =bookmarks.filter((bookmark) => bookmark.description.toLowerCase().includes(description) );
-
-
-
      }
         return bookmarks;
 
-
     }
+
 
     findByTd(id:string): NewType {
        // return this.bookmarks.find((bookmark) => bookmark.id == id);
@@ -51,5 +47,9 @@ description
         this.bookmarks.push(Bookmark);
 
         return Bookmark;
+    }
+    deleteBookmark(id:string):void{
+        this.bookmarks=this.bookmarks.filter((bookmark)=>bookmark.id !==id)
+
     }
 }
