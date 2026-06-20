@@ -1,39 +1,54 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
-import { get } from 'http';
-import type { bookmark } from './bookmark.model';
-import { url } from 'inspector';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { GetBookmarkDto } from './dto/get-bookmark.dto';
 
 @Controller('bookmarks')
 export class BookmarksController {
-    constructor(private BookmarksService:BookmarksService){}
+  constructor(private bookmarksService: BookmarksService) {}
 
- @Get()  
-find(@Query()GetBookmarkDto: GetBookmarkDto):bookmark[]{
-   if(Object.keys(GetBookmarkDto).length){
-      return this.BookmarksService.find(GetBookmarkDto);
-   }
-   return this.BookmarksService.findAll();
-}
+  // GET + FILTER
+  @Get()
+  find(@Query() query: GetBookmarkDto) {
+    return this.bookmarksService.findAll(query);
+  }
 
-@Get('/:id')
-findByTd(@Param('id') id:string):bookmark{
-   return this.BookmarksService.findByTd(id)
-}
+  // GET BY ID
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.bookmarksService.findById(Number(id));
+  }
 
-@Post()
-createBookmark(@Body() CreateBookmarkDto: CreateBookmarkDto): bookmark {
- return this.BookmarksService.createbookmark(CreateBookmarkDto);
-}
+  // CREATE
+  @Post()
+  create(@Body() dto: CreateBookmarkDto) {
+    return this.bookmarksService.createbookmark(dto);
+  }
 
-@Delete('/:id')
-deleteBookmark(@Param('id')id: string):void{
-return this.BookmarksService.deleteBookmark(id);
- }
- @Patch('/:id/description')
- updateBookmarkDescription(@Param('id')id: string, @Body('description') description: string):bookmark{
-   return this.BookmarksService.updateBookmarkDescription(id,description)
- }
+  // DELETE
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.bookmarksService.deleteBookmark(Number(id));
+  }
+
+  // UPDATE DESCRIPTION
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body('description') description: string,
+  ) {
+    return this.bookmarksService.updateBookmarkDescription(
+      Number(id),
+      description,
+    );
+  }
 }

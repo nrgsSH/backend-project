@@ -1,62 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { url } from 'inspector';
-import { bookmark } from './bookmark.model';
-import { v4 as uuid } from "uuid";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Bookmark } from './bookmark.entity';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { GetBookmarkDto } from './dto/get-bookmark.dto';
 
-type NewType = bookmark;
-
 @Injectable()
 export class BookmarksService {
-    private bookmarks:bookmark[] =[]
 
-    findAll():bookmark[]{
-        return this.bookmarks;
+  constructor(
+    @InjectRepository(Bookmark)
+    private bookmarkRepo: Repository<Bookmark>,
+  ) {}
+
+  // CREATE
+  createbookmark(dto: CreateBookmarkDto) {
+    const bookmark = this.bookmarkRepo.create(dto);
+    return this.bookmarkRepo.save(bookmark);
+  }
+
+  // FIND ALL + FILTER
+  findAll(query?: GetBookmarkDto) {
+    if (!query) {
+      return this.bookmarkRepo.find();
     }
 
-    find(GetBookmarkDto: GetBookmarkDto): bookmark[] {
-     let bookmarks=this.findAll();
-     const {url,description}=GetBookmarkDto;
+    const qb = this.bookmarkRepo.createQueryBuilder('bookmark');
 
-     if(url){
-      bookmarks =bookmarks.filter((bookmark) => bookmark.url.toLowerCase().includes(url));
-     }
-
-     if(description){
-        bookmarks =bookmarks.filter((bookmark) => bookmark.description.toLowerCase().includes(description) );
-     }
-        return bookmarks;
-
+    if (query.url) {
+      qb.andWhere('bookmark.url LIKE :url', {
+        url: `%${query.url}%`,
+      });
     }
 
-
-    findByTd(id:string): NewType {
-       // return this.bookmarks.find((bookmark) => bookmark.id == id);
-        return this.bookmarks.find(b => b.id === id)!;
+    if (query.description) {
+      qb.andWhere('bookmark.description LIKE :description', {
+        description: `%${query.description}%`,
+      });
     }
 
+    return qb.getMany();
+  }
 
-    createbookmark(CreateBookmarkDto:CreateBookmarkDto):bookmark{
-        const{url,description,} =CreateBookmarkDto
-        const Bookmark:bookmark={
-id:uuid(),
-url,
-description
-        }
-        this.bookmarks.push(Bookmark);
+  // FIND BY ID
+  findById(id: number) {
+    return this.bookmarkRepo.findOne({
+      where: { id },
+    });
+  }
 
-        return Bookmark;
-    }
-    deleteBookmark(id:string):void{
-        this.bookmarks=this.bookmarks.filter((bookmark)=>bookmark.id !==id)
+  // DELETE
+  deleteBookmark(id: number) {
+    return this.bookmarkRepo.delete(id);
+  }
 
-    }
-
-    updateBookmarkDescription(id: string, description: string): bookmark {
-        const bookmark =this.findByTd(id);
-        bookmark.description = description
-        return bookmark;
-
-    }
+  // UPDATE
+  updateBookmarkDescription(id: number, description: string) {
+    return this.bookmarkRepo.update(id, { description });
+  }
 }

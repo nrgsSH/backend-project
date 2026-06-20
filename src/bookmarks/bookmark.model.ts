@@ -1,5 +1,12 @@
-export interface bookmark {
-    id:string;
-    url:string;
-    description:string;
-}
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { BookmarksController } from './bookmarks.controller';
+import { BookmarksService } from './bookmarks.service';
+import { Bookmark } from './bookmark.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Bookmark])],
+  controllers: [BookmarksController],
+  providers: [BookmarksService],
+})
+export class BookmarksModule {}
