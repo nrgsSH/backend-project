@@ -52,4 +52,11 @@ description
         this.bookmarks=this.bookmarks.filter((bookmark)=>bookmark.id !==id)
 
     }
+
+    updateBookmarkDescription(id: string, description: string): bookmark {
+        const bookmark =this.findByTd(id);
+        bookmark.description = description
+        return bookmark;
+
+    }
 }

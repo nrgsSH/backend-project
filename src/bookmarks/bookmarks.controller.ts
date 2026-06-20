@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { get } from 'http';
 import type { bookmark } from './bookmark.model';
@@ -31,5 +31,9 @@ createBookmark(@Body() CreateBookmarkDto: CreateBookmarkDto): bookmark {
 @Delete('/:id')
 deleteBookmark(@Param('id')id: string):void{
 return this.BookmarksService.deleteBookmark(id);
+ }
+ @Patch('/:id/description')
+ updateBookmarkDescription(@Param('id')id: string, @Body('description') description: string):bookmark{
+   return this.BookmarksService.updateBookmarkDescription(id,description)
  }
 }
